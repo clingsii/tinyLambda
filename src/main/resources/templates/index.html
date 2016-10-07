@@ -8,7 +8,7 @@
 </head>
 <body>
 
-    <form role="form"  action="#" th:action="@{/}" th:object="${command}" method="POST">
+    <form role="form" id="codeForm"  action="#" th:action="@{/}" th:object="${command}" method="POST">
         <div class="form-group">
             <label>Select language</label>
             <select th:filed="*{language}">
@@ -25,13 +25,14 @@
 
     <div class="result">
         <label>Result</label>
-        <p th:text="${output}"></p>
+        <textarea id="outputValue" readonly="readonly"/>
     </div>
 
 
 
 <script src="http://cdn.bootcss.com/jquery/1.11.1/jquery.min.js"></script>
 <script src="http://cdn.bootcss.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+<script src="/async.js"/>
 
 
 </body>

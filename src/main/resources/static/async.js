@@ -11,7 +11,9 @@ $("#codeForm").submit(function(e) {
         data: $("#codeForm").serialize(),
         success: function(data)
         {
-            alert(data);
+            if (data.success) {
+                $('#outputValue').val(data.output);
+            }
         }
     });
 

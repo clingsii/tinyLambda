@@ -38,6 +38,7 @@ public class JavaCodeEngine implements CodeEngine {
 
             String log = Files.toString(logFile, Charset.defaultCharset());
             executionResult.setOutput(log);
+            executionResult.setSuccess(true);
             logFile.delete();
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
