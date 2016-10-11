@@ -11,8 +11,9 @@
     <form role="form" id="codeForm"  action="#" th:action="@{/}" th:object="${command}" method="POST">
         <div class="form-group">
             <label>Select language</label>
-            <select th:filed="*{language}">
-                <option>Java</option>
+            <select th:field="*{language}">
+                <option value="java">Java</option>
+                <option value="groovy">Groovy</option>
             </select>
         </div>
         <div class="form-group">
