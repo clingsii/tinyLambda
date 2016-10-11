@@ -39,6 +39,8 @@ public class JavaCodeEngine implements CodeEngine {
             String log = Files.toString(logFile, Charset.defaultCharset());
             executionResult.setOutput(log);
             executionResult.setSuccess(true);
+
+
             logFile.delete();
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
@@ -54,7 +56,7 @@ public class JavaCodeEngine implements CodeEngine {
     }
 
     private String getDynamicClassName() {
-        return "DynamicJava";
+        return "DynamicJava" + System.nanoTime();
     }
 
     private String getClassContent(String className, String code) {
