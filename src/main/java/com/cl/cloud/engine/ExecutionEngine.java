@@ -1,9 +1,14 @@
 package com.cl.cloud.engine;
 
+import com.cl.cloud.annotations.Language;
 import com.cl.cloud.domain.CodeRequest;
 import com.cl.cloud.domain.ExecutionResult;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
+import com.google.common.reflect.ClassPath;
 
+import java.io.IOException;
+import java.lang.annotation.Annotation;
 import java.util.Map;
 
 /**
@@ -11,24 +16,59 @@ import java.util.Map;
  */
 public class ExecutionEngine {
 
-    private static ExecutionEngine executionEngine;
+    private static final ExecutionEngine INSTANCE = new ExecutionEngine();
 
 
-    private static Map<String, CodeEngine> engineMap;
+    private static final Map<String, CodeEngine> engineMap = Maps.newConcurrentMap();
 
     static {
-        executionEngine = new ExecutionEngine();
-        executionEngine.engineMap = Maps.newHashMap();
-        executionEngine.engineMap.put("java", new JavaCodeEngine());
-        executionEngine.engineMap.put("groovy", new GroovyEngine());
+
+        /**
+         * initialize all engines
+         */
+        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+        try {
+            ClassPath classPath = ClassPath.from(classLoader);
+            // scan all classes in the same package
+            ImmutableSet<ClassPath.ClassInfo> classInfos =
+                    classPath.getTopLevelClasses(ExecutionEngine.class.getPackage().getName());
+
+            classInfos.stream().forEach(c -> {
+                Class clazz = c.load();
+                Class[] interfaces = clazz.getInterfaces();
+                if (interfaces != null && interfaces.length > 0) {
+
+                    for (Class interfaceClass : interfaces) {
+                        if (interfaceClass == CodeEngine.class) {
+                            Annotation[] annotations = clazz.getAnnotationsByType(Language.class);
+                            if (annotations != null) {
+                                for (Annotation a : annotations) {
+                                    Language language = (Language) a;
+                                    try {
+                                        engineMap.put(language.value(), (CodeEngine) clazz.newInstance());
+                                    } catch (InstantiationException e) {
+                                        e.printStackTrace();
+                                    } catch (IllegalAccessException e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
 
-    private ExecutionEngine(){
+    private ExecutionEngine() {
 
     }
 
-    public static ExecutionEngine getInstance(){
-        return executionEngine;
+    public static ExecutionEngine getInstance() {
+        return INSTANCE;
     }
 
     public static ExecutionResult execute(CodeRequest request) {
@@ -38,4 +78,5 @@ public class ExecutionEngine {
         }
         return engine.execute(request.getCodes());
     }
+
 }
