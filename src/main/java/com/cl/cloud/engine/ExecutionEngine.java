@@ -3,6 +3,7 @@ package com.cl.cloud.engine;
 import com.cl.cloud.annotations.Language;
 import com.cl.cloud.domain.CodeRequest;
 import com.cl.cloud.domain.ExecutionResult;
+import com.google.common.base.Stopwatch;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
 import com.google.common.reflect.ClassPath;
@@ -10,6 +11,7 @@ import com.google.common.reflect.ClassPath;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by Ling Cao on 2016/10/11.
@@ -17,6 +19,8 @@ import java.util.Map;
 public class ExecutionEngine {
 
     private static final ExecutionEngine INSTANCE = new ExecutionEngine();
+
+    private static  final Stopwatch stopwatch = Stopwatch.createStarted();
 
 
     private static final Map<String, CodeEngine> engineMap = Maps.newConcurrentMap();
@@ -76,7 +80,13 @@ public class ExecutionEngine {
         if (engine == null) {
             throw new UnsupportedOperationException("can't execute " + request.getLanguage() + " code");
         }
-        return engine.execute(request.getCodes());
+
+        stopwatch.reset();
+        stopwatch.start();
+        ExecutionResult result =  engine.execute(request.getCodes());
+        stopwatch.stop();
+        result.setConsumedTime(stopwatch.elapsed(TimeUnit.MILLISECONDS));
+        return result;
     }
 
 }

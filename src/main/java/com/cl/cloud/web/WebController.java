@@ -32,6 +32,7 @@ public class WebController {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("success", result.isSuccess());
         jsonObject.put("output", result.getOutput());
+        jsonObject.put("timeConsumed", result.getConsumedTime());
         return jsonObject.toString();
     }
 

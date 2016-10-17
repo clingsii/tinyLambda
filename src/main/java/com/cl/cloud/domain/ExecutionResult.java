@@ -8,6 +8,7 @@ public class ExecutionResult {
     private String output;
     private String log;
     private String error;
+    private long consumedTime;
 
     public boolean isSuccess() {
         return success;
@@ -41,4 +42,11 @@ public class ExecutionResult {
         this.error = error;
     }
 
+    public long getConsumedTime() {
+        return consumedTime;
+    }
+
+    public void setConsumedTime(long consumedTime) {
+        this.consumedTime = consumedTime;
+    }
 }

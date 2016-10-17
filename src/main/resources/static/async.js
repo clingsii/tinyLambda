@@ -13,6 +13,7 @@ $("#codeForm").submit(function(e) {
         {
             if (data.success) {
                 $('#outputValue').val(data.output);
+                $('#timeConsumed').val(data.timeConsumed);
             }
         }
     });

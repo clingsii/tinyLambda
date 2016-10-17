@@ -50,9 +50,10 @@ public class JavaCodeEngine implements CodeEngine {
         return "import java.io.*; " +
                 "public class " + className + "  implements Runnable {" +
                 "    @Override " +
-                "    public void run() { "
+                "    public void run() { " +
+                "try {"
                 + code +
-                "  }" +
+                " } catch(Exception e){e.printStackTrace();} }" +
                 "}";
     }
 
